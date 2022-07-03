@@ -1,0 +1,9 @@
+[Unit]
+Description=Setup for BBB pins
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /home/debian/pin-config.sh
+
+[Install]
+WantedBy=multi-user.target

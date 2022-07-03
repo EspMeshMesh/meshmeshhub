@@ -1,0 +1,12 @@
+[Unit]
+Description=Meshmesh
+After=network-online.target
+
+[Service]
+Type=simple
+User=%i
+ExecStart=python3 -m meshmesh.hub2
+WorkingDirectory = /home/%i
+
+[Install]
+WantedBy=multi-user.target
