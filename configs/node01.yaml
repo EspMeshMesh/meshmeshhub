@@ -1,0 +1,29 @@
+esphome:
+  name: node01
+  platform: ESP8266
+  board: d1_mini
+  arduino_version: 2.7.4
+
+logger:
+  level: VERBOSE
+  baud_rate: 0
+
+api:
+  reboot_timeout: 0s
+
+meshmesh:
+  baud_rate: 460800
+  rx_buffer_size: 2048
+  tx_buffer_size: 4096
+  channel: 9
+  password: !secret meshmesh_password
+
+socket:
+  implementation: meshmesh_esp8266
+
+switch:
+  - platform: gpio
+    pin: D4
+    inverted: true
+    name: "Blue LEDS"
+
