@@ -672,6 +672,7 @@ def auto_bool(v):
 
 parser = argparse.ArgumentParser(description='Test Meshmesh protocol')
 parser.add_argument('--hub', dest='hub', default='127.0.0.1', type=str, help='IP address of the hub2 server')
+parser.add_argument('--port', dest='port', default=8801, type=int, help='port address of the hub2 server')
 parser.add_argument('--id', dest='id', default=0, type=auto_int, help='node id')
 parser.add_argument('--group', dest='group', default=0, type=auto_int, help='node group')
 parser.add_argument('--test-repeats', dest='test_repeats', default=1, type=auto_int, help='repeat tests N times')
@@ -703,6 +704,8 @@ if args.hash:
     ENTITY_HASH = args.hash
 if args.hub:
     IP_SERVER = args.hub
+if args.hub:
+    PORT_SERVER = args.port
 
 DEVICE = xmlrpc.client.ServerProxy(f"http://{IP_SERVER}:{PORT_SERVER}/RPC2", transport=RequestsTransport())
 

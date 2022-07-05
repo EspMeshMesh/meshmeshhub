@@ -353,7 +353,7 @@ async def download_xml(request):
     return Response(body=body, content_type='application/xml')
 
 
-def xmlrpcserver_setup(loop: AbstractEventLoop, protocol: str):
+def xmlrpcserver_setup(loop: AbstractEventLoop, protocol: str, port: int):
     global globalProtocol
 
     if protocol:
@@ -365,6 +365,6 @@ def xmlrpcserver_setup(loop: AbstractEventLoop, protocol: str):
     app.router.add_route('GET', '/download_xml', download_xml)
     runner = AppRunner(app)
     loop.run_until_complete(runner.setup())
-    site = TCPSite(runner, host='0.0.0.0', port=8801)
+    site = TCPSite(runner, host='0.0.0.0', port=port)
     loop.run_until_complete(site.start())
 

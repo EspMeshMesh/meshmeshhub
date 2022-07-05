@@ -110,6 +110,30 @@ def main(_args=None):
 
     logging.getLogger('matplotlib.font_manager').disabled = True
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-sp", "--serial-port", type=str, default=None,
+                        help="Select HUB device serial port")
+    parser.add_argument("-br", "--baud-rate", type=int, default=None,
+                        help="Select HUB device serial port baud rate")
+    parser.add_argument("-p", "--protocol", type=str, choices=['unicast', 'multipath', 'polite', 'connpath'], default=None,
+                        help="Select default protocol")
+    parser.add_argument("-pp", "--port", type=int, default=8801,
+                        help="Select default protocol")
+    parser.add_argument("-ep", "--esphomeport", type=int, default=6053,
+                        help="Select default protocol")
+    parser.add_argument("-eg", "--empty-graph", action='store_true', help='start with empty grpah. Coordinator only')
+    args = parser.parse_args()
+
+    if args.serial_port and args.serial_port != conf['serial']['port']:
+        conf['serial']['port'] = args.serial_port
+        with open('meshmeshhub.ini', 'w') as configfile:
+            conf.write(configfile)
+
+    if args.baud_rate and args.baud_rate != conf['serial']['baud']:
+        conf['serial']['baud'] = str(args.baud_rate)
+        with open('meshmeshhub.ini', 'w') as configfile:
+            conf.write(configfile)
+
     loop = asyncio.get_event_loop()
     loop.set_debug(False)
     # loop.set_exception_handler(handle_exception)
@@ -117,14 +141,6 @@ def main(_args=None):
         loop.add_signal_handler(s, lambda _s=s: asyncio.create_task(shutdown(loop, signal_=_s)))
     coro = serial_asyncio.create_serial_connection(loop, SerialProtocol, conf['serial']['port'], baudrate=conf['serial']['baud'])
     # coro = SerialProtocolW.create_serial_connection(conf['serial']['port'], baudrate=conf['serial']['baud'])
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--protocol", type=str, choices=['unicast', 'multipath', 'polite', 'connpath'], default=None,
-                        help="Select default protocol")
-    parser.add_argument("-eg", "--empty-graph", action='store_true', help='start with empty grpah. Coordinator only')
-    args = parser.parse_args()
-    if args.protocol:
-        pass
 
     if args.empty_graph:
         GraphNetwork.instance().init_empty()
@@ -139,9 +155,9 @@ def main(_args=None):
             return
         connectedpath_setup()
         print('serialconnection Setup phase completed... local node is 0x%08X firmware (%s)' % (local_node_serial, local_node_firm))
-        xmlrpcserver_setup(loop, args.protocol)
+        xmlrpcserver_setup(loop, args.protocol, args.port)
         print('xmlrpcserver Setup phase completed...')
-        esphomeapi_setup(loop)
+        esphomeapi_setup(loop, args.esphomeport)
         print('esphomeapi_setup Setup phase completed. Starting main loop')
         # loop.set_exception_handler(handle_exception)
         connectedpath_pre_run(loop)

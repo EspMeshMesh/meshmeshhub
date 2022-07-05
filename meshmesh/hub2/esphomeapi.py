@@ -129,9 +129,9 @@ class SocketProtocol(asyncio.Protocol):
                                                         self.disconnect_remote)  # type: Connection
 
 
-def esphomeapi_setup(loop: asyncio.AbstractEventLoop):
+def esphomeapi_setup(loop: asyncio.AbstractEventLoop, port: int):
     global server
-    coro = loop.create_server(SocketProtocol, host='0.0.0.0', port=6053)
+    coro = loop.create_server(SocketProtocol, host='0.0.0.0', port=port)
     server = loop.run_until_complete(coro)
 
 
