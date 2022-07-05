@@ -1,5 +1,37 @@
 # MeshMeshHub
 
+![MeshMesh](images/mesh-icon-16.jpg)
+
+## Introduction
+
+MeshMesh is a mesh network implementation for any esp8266 board.
+
+1) Is based on the  [Esphome](https://github.com/esphome/esphome) firmware
+
+2) It relies on raw 802.11 packets and does not require a wifi AP to  work 
+
+3) The packets can make jumps on intermediate devices to extend the  range of the network. 
+
+4) There is not limit on number of nodes. 
+
+5) Beacons are not required to maintain active the connections (less  electromagnetic pollution)
+
+6) Compatible with the Esphome api component 
+
+7) Compatible with [Home assistant](https://github.com/home-assistant)  trough a modified [Aioesphomeapi](https://github.com/esphome/aioesphomeapi) library 
+
+8) It require a single [Esphome](https://github.com/esphome/esphome) device that act as [hub](https://github.com/EspMeshMesh/meshmeshhub) (like zigbee for  example) 
+
+9) The topology of the network is dynamic and can be changed easily 9) 
+
+10) Only the Esp8266 is supported for now. I'm trying to implement the  same logic on a esp32 but the task is far from be finished. 
+
+11) is not based on the Espressif mesh implementation.
+
+The following image show a brief structure of the mesh network.
+
+<img src="images/network_topology.png" alt="Topology" style="zoom:75%;" />
+
 ## Preparation
 
 ```sh
@@ -24,7 +56,7 @@ pip install -r requirements.txt
 ```
 
 ```shell
-cd ${WORKSPACE}/esphome
+cd ${WORKSPACE}/meshmeshhub
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
@@ -36,7 +68,7 @@ pip install -r requirements.txt
 
 ### Load firmware on HUB node
 
-This tutrial is focused on flash and test the HUB node device.
+This tutorial is focused on flash and test the HUB node device.
 
 Enter in the esphome project folder:
 
@@ -68,11 +100,13 @@ If you see something similar the above picture and the last three bytes of the m
 
 ## Tutorial 2: Test the HUB device with the test software
 
-For this tutorial you must have a running HUB software (follow the Tutorial 1 in order to have a running HUB software).
+*For this tutorial you must have a running HUB software (follow the Tutorial 1 in order to have a running HUB software connected with the HUB device).*
 
 To be continued...
 
 ## Tutorial 3: Flash and test a second node
+
+*For this tutorial you must have a running HUB software (follow the Tutorial 1 in order to have a running HUB software connected with the HUB device).*
 
 Enter in the esphome project folder:
 
@@ -86,4 +120,26 @@ Connect the **second** device (d1 mini or nodemcu) to the usb port (let's suppos
 python -m esphome run --device /dev/ttyUSB1  ../meshmeshhub/configs/node02.yaml 
 ```
 
-To be continued...
+Keep note of device mac address provided by the esptool: The network address inside the network will be equal to the last three bytes of the device mac address.
+
+![Node02 Mac Address](images/node2_mac_address.png)
+
+Check if the second node is working correctly, in the following command use the mac address of the second device obtained after the firmware upload.
+
+```shell
+cd ${WORKSPACE}/meshmeshhub
+source venv/bin/activate
+PYTHONPATH=$PWD python meshmesh/hub2/test.py --read-entities 0x1C91BB 
+```
+
+![](images/node2_test1.png)
+
+If you see a similar screen the second node is working correctly.
+
+## Tutorial 4: Automated node discovery
+
+
+
+## Application icon attribution
+
+[Mesh Icon # 79620](https://icon-library.com/icon/mesh-icon-16.html.html) 
