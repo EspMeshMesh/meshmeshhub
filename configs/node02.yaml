@@ -20,6 +20,9 @@ meshmesh:
 socket:
   implementation: meshmesh_esp8266
 
+mdns:
+  disabled: true
+
 switch:
   - platform: gpio
     pin: D4
