@@ -49,20 +49,23 @@ git clone https://github.com/EspMeshMesh/aioesphomeapi.git
 ```
 
 ```shell
-cd ${WORKSPACE}/esphome
+# Create a virtual envirnonment
+cd ${WORKSPACE}
 python -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt
-```
-
-```shell
+# Installa dependecies
+pip install -r esphome/requirements.txt
+pip install -r meshmeshhub/requirements.txt7
+# Build and install meshmeshhub
 cd ${WORKSPACE}/meshmeshhub
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+python setup.py sdist --format=zip
+pip install dist/meshmesh-1.0.1.zip
+# Build and install aioesphomeapi
+cd ${WORKSPACE}/meshmeshhub
+python setup.py sdist --format=zip
+pip install dist/aioesphomeapi-10.10.1.zip
+
 ```
-
-
 
 ## Tutorial 1: Local node test
 
@@ -73,7 +76,10 @@ This tutorial is focused on flash and test the HUB node device.
 Enter in the esphome project folder:
 
 ```shell
-cd ${WORKSPACE}/esphome
+# Activate the virtual envirnonment
+cd ${WORKSPACE}
+source venv/bin/activate
+cd esphome
 ```
 
 Connect the **first** device (d1 mini or nodemcu) to the usb (/dev/ttyUSB0) port 
@@ -90,8 +96,10 @@ Keep note of device mac address provided by the esptool: The network address ins
 ### Connect the python HUB software to the HUB node
 
 ```shell
-cd ${WORKSPACE}/meshmeshhub
-venv/bin/python -m meshmesh.hub2 -p unicast  -sp /dev/ttyUSB0 -br 460800 -eg 
+cd ${WORKSPACE}
+source venv/bin/activate
+cd meshmeshhub
+meshmeshhub -p unicast  -sp /dev/ttyUSB0 -br 460800 -eg 
 ```
 
 ![Hub Start](images/hub_start.png)
@@ -102,7 +110,15 @@ If you see something similar the above picture and the last three bytes of the m
 
 *For this tutorial you must have a running HUB software (follow the Tutorial 1 in order to have a running HUB software connected with the HUB device).*
 
-To be continued...
+```shell
+cd ${WORKSPACE}
+source venv/bin/activate
+meshmeshtest --read-entities 0
+```
+
+The result must be similar to the following image indicating a correct communication between the HUB device and the HUB software.
+
+![Node1 test](images/node1_test1.png)
 
 ## Tutorial 3: Flash and test a second node
 
@@ -111,7 +127,9 @@ To be continued...
 Enter in the esphome project folder:
 
 ```shell
-cd ${WORKSPACE}/esphome
+cd ${WORKSPACE}
+source venv/bin/activate
+cd esphome
 ```
 
 Connect the **second** device (d1 mini or nodemcu) to the usb port (let's suppose that his serial port is /dev/ttyUSB1)  and flash the **node02** configuration.
@@ -124,17 +142,17 @@ Keep note of device mac address provided by the esptool: The network address ins
 
 ![Node02 Mac Address](images/node2_mac_address.png)
 
-Check if the second node is working correctly, in the following command use the mac address of the second device obtained after the firmware upload.
+Check if the second node is working correctly, in the following command use the mac address of your device, obtained after the firmware upload as shown in the previous image.
 
 ```shell
-cd ${WORKSPACE}/meshmeshhub
+cd ${WORKSPACE}/
 source venv/bin/activate
-PYTHONPATH=$PWD python meshmesh/hub2/test.py --read-entities 0x1C91BB 
+meshmeshtest --read-entities 0x1C91BB 
 ```
 
-![](images/node2_test1.png)
+The result must be similar to the following image indicating a correct communication between the HUB device and remote device.
 
-If you see a similar screen the second node is working correctly.
+![Node2 test](images/node2_test1.png)
 
 ## Tutorial 4: Automated node discovery
 

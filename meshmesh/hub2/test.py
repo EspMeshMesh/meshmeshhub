@@ -670,129 +670,135 @@ def auto_bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 
-parser = argparse.ArgumentParser(description='Test Meshmesh protocol')
-parser.add_argument('--hub', dest='hub', default='127.0.0.1', type=str, help='IP address of the hub2 server')
-parser.add_argument('--port', dest='port', default=8801, type=int, help='port address of the hub2 server')
-parser.add_argument('--id', dest='id', default=0, type=auto_int, help='node id')
-parser.add_argument('--group', dest='group', default=0, type=auto_int, help='node group')
-parser.add_argument('--test-repeats', dest='test_repeats', default=1, type=auto_int, help='repeat tests N times')
-parser.add_argument('--hash', dest='hash', default=0, type=auto_int, help='entity hash')
-parser.add_argument('--firmware', dest='firmware', default=None, help='firmware file tu upload to node')
-parser.add_argument('--node-tag', dest='node_tag', default=None, help='set the tag of node')
-parser.add_argument('--log-destination', dest='log_destination', default=-1, type=auto_int, help='set the log destination of node')
-parser.add_argument('--node-reboot', dest='node_reboot', default=None, type=auto_int, help='reboot node')
-parser.add_argument('--discovery', dest='discovery', default=0, type=auto_int, help='discovery nodes around')
-parser.add_argument('--discovery-entities', dest='discovery_entities', default=False, action='store_true', help='look for entitie')
-parser.add_argument('--read-entities', dest='read_entities', default=None, type=auto_int, help='Read entities')
-parser.add_argument('--set-entity-state', dest='set_entity_state', default=None, type=auto_int, help='Set entity state')
-parser.add_argument('--set-entity-prefs', dest='set_entity_prefs', default=None, type=auto_int, help='Set entity preferences')
-parser.add_argument('--test-switches', dest='test_switches', default=False, type=bool, help='test switches')
-parser.add_argument('--test-dali', dest='test_dali', default=False, type=bool, help='test DALI lights')
-parser.add_argument('--rssi-check', dest='rssi_check', default=None, type=auto_int, help='RSSI test procedure')
-parser.add_argument('--rssi-check-duration', dest='rssi_check_duration', default=60, type=auto_int, help='RSSI test procedure duration')
-parser.add_argument('--set-switch-state', dest='set_switch_state', default=None, type=auto_bool, help='set switch state')
-parser.add_argument('--filter-groups', dest='filter_groups', default=False, action='store_true', help='get filter groups')
-parser.add_argument('--filter-groups-set', dest='filter_groups_set', default=None, type=auto_int, help='get filter groups')
+def main():
+    global ID_NODO, ID_NODO_LOCALE
+    parser = argparse.ArgumentParser(description='Test Meshmesh protocol')
+    parser.add_argument('--hub', dest='hub', default='127.0.0.1', type=str, help='IP address of the hub2 server')
+    parser.add_argument('--port', dest='port', default=8801, type=int, help='port address of the hub2 server')
+    parser.add_argument('--id', dest='id', default=0, type=auto_int, help='node id')
+    parser.add_argument('--group', dest='group', default=0, type=auto_int, help='node group')
+    parser.add_argument('--test-repeats', dest='test_repeats', default=1, type=auto_int, help='repeat tests N times')
+    parser.add_argument('--hash', dest='hash', default=0, type=auto_int, help='entity hash')
+    parser.add_argument('--firmware', dest='firmware', default=None, help='firmware file tu upload to node')
+    parser.add_argument('--node-tag', dest='node_tag', default=None, help='set the tag of node')
+    parser.add_argument('--log-destination', dest='log_destination', default=-1, type=auto_int, help='set the log destination of node')
+    parser.add_argument('--node-reboot', dest='node_reboot', default=None, type=auto_int, help='reboot node')
+    parser.add_argument('--discovery', dest='discovery', default=0, type=auto_int, help='discovery nodes around')
+    parser.add_argument('--discovery-entities', dest='discovery_entities', default=False, action='store_true', help='look for entitie')
+    parser.add_argument('--read-entities', dest='read_entities', default=None, type=auto_int, help='Read entities')
+    parser.add_argument('--set-entity-state', dest='set_entity_state', default=None, type=auto_int, help='Set entity state')
+    parser.add_argument('--set-entity-prefs', dest='set_entity_prefs', default=None, type=auto_int, help='Set entity preferences')
+    parser.add_argument('--test-switches', dest='test_switches', default=False, type=bool, help='test switches')
+    parser.add_argument('--test-dali', dest='test_dali', default=False, type=bool, help='test DALI lights')
+    parser.add_argument('--rssi-check', dest='rssi_check', default=None, type=auto_int, help='RSSI test procedure')
+    parser.add_argument('--rssi-check-duration', dest='rssi_check_duration', default=60, type=auto_int, help='RSSI test procedure duration')
+    parser.add_argument('--set-switch-state', dest='set_switch_state', default=None, type=auto_bool, help='set switch state')
+    parser.add_argument('--filter-groups', dest='filter_groups', default=False, action='store_true', help='get filter groups')
+    parser.add_argument('--filter-groups-set', dest='filter_groups_set', default=None, type=auto_int, help='get filter groups')
 
-args = parser.parse_args()
+    args = parser.parse_args()
 
-if args.id:
-    ID_NODO = args.id
-if args.group:
-    GROUP_NODO = args.group
-if args.hash:
-    ENTITY_HASH = args.hash
-if args.hub:
-    IP_SERVER = args.hub
-if args.hub:
-    PORT_SERVER = args.port
+    if args.id:
+        ID_NODO = args.id
+    if args.group:
+        GROUP_NODO = args.group
+    if args.hash:
+        ENTITY_HASH = args.hash
+    if args.hub:
+        IP_SERVER = args.hub
+    if args.hub:
+        PORT_SERVER = args.port
 
-DEVICE = xmlrpc.client.ServerProxy(f"http://{IP_SERVER}:{PORT_SERVER}/RPC2", transport=RequestsTransport())
+    DEVICE = xmlrpc.client.ServerProxy(f"http://{IP_SERVER}:{PORT_SERVER}/RPC2", transport=RequestsTransport())
 
-time.sleep(0.2)
-test_local_node()
-entities = test_entities_for_node(0)
-
-if ID_NODO > 0:
     time.sleep(0.2)
-    test_remote_node(ID_NODO)
+    test_local_node()
+    entities = test_entities_for_node(0)
 
-if args.node_tag:
-    change_node_tag(args.node_tag, ID_NODO)
-if args.log_destination >= 0:
-    set_log_destination(args.log_destination, ID_NODO)
-if args.filter_groups:
-    grouph, groupl = DEVICE.cmd_filter_groups(ID_NODO)
-#if args.filter_groups_set is not None and args.filter_groups_set >= 0:
-#    set_filter_groups(args.filter_groups_set, ID_NODO)
-if args.filter_groups_set:
-    grouph = (int(args.filter_groups_set) & 0xFFFF0000) >> 16
-    groupl = (int(args.filter_groups_set) & 0xFFFF)
-    try:
-        print(grouph, groupl)
-        DEVICE.cmd_filter_groups_set(grouph, groupl, ID_NODO)
-    except Exception as ex:
-        print(str(ex))
+    if ID_NODO > 0:
+        time.sleep(0.2)
+        test_remote_node(ID_NODO)
 
-#if entities is not None:
-    #test_entitites_reading(entities, ID_NODO)
-    #for i in range(1,100):
+    if args.node_tag:
+        change_node_tag(args.node_tag, ID_NODO)
+    if args.log_destination >= 0:
+        set_log_destination(args.log_destination, ID_NODO)
+    if args.filter_groups:
+        grouph, groupl = DEVICE.cmd_filter_groups(ID_NODO)
+    #if args.filter_groups_set is not None and args.filter_groups_set >= 0:
+    #    set_filter_groups(args.filter_groups_set, ID_NODO)
+    if args.filter_groups_set:
+        grouph = (int(args.filter_groups_set) & 0xFFFF0000) >> 16
+        groupl = (int(args.filter_groups_set) & 0xFFFF)
+        try:
+            print(grouph, groupl)
+            DEVICE.cmd_filter_groups_set(grouph, groupl, ID_NODO)
+        except Exception as ex:
+            print(str(ex))
+
+    #if entities is not None:
         #test_entitites_reading(entities, ID_NODO)
-        #time.sleep(1)
+        #for i in range(1,100):
+            #test_entitites_reading(entities, ID_NODO)
+            #time.sleep(1)
 
-if args.node_reboot is not None:
-    node_reboot(args.node_reboot)
-if args.firmware is not None:
-    test_send_update(args.firmware, ID_NODO)
-if args.discovery > 0:
-    discovery_nodes(args.discovery, ID_NODO, True)
+    if args.node_reboot is not None:
+        node_reboot(args.node_reboot)
+    if args.firmware is not None:
+        test_send_update(args.firmware, ID_NODO)
+    if args.discovery > 0:
+        discovery_nodes(args.discovery, ID_NODO, True)
 
-entities = None
-for i in range(0, args.test_repeats):
-    if args.read_entities is not None:
-        entities = test_entities_for_node(args.read_entities)
-        #test_dali_lights(e, args.read_entities)
-        #time.sleep(2)
-        test_entitites_reading(entities, args.read_entities)
+    entities = None
+    for i in range(0, args.test_repeats):
+        if args.read_entities is not None:
+            entities = test_entities_for_node(args.read_entities)
+            #test_dali_lights(e, args.read_entities)
+            #time.sleep(2)
+            test_entitites_reading(entities, args.read_entities)
 
-    if args.set_entity_state is not None:
-        if ENTITY_HASH is None:
-            print("Fatal: Hash is required for this operation.")
-        else:
-            if GROUP_NODO > 0:
-                _value = DEVICE.brd_service_set_entity_state(SERVICE_LIGHT, ENTITY_HASH, args.set_entity_state, GROUP_NODO)
+        if args.set_entity_state is not None:
+            if ENTITY_HASH is None:
+                print("Fatal: Hash is required for this operation.")
             else:
-                _value = DEVICE.cmd_service_set_entity_state(SERVICE_LIGHT, ENTITY_HASH, args.set_entity_state, ID_NODO)
+                if GROUP_NODO > 0:
+                    _value = DEVICE.brd_service_set_entity_state(SERVICE_LIGHT, ENTITY_HASH, args.set_entity_state, GROUP_NODO)
+                else:
+                    _value = DEVICE.cmd_service_set_entity_state(SERVICE_LIGHT, ENTITY_HASH, args.set_entity_state, ID_NODO)
 
-    if args.set_entity_prefs is not None:
-        if ENTITY_HASH is None:
-            print("Fatal: Hash is required for this operation.")
-        else:
-            _value = DEVICE.cmd_service_get_entity_preferences_num(SERVICE_BINARY, ENTITY_HASH, ID_NODO)
-            print('Set preference 1/%d' % _value)
-            _value = DEVICE.cmd_service_get_entity_preferences(SERVICE_BINARY, ENTITY_HASH, 1, ID_NODO)
-            print('Old preference is %d' % _value)
-            DEVICE.cmd_service_set_entity_preferences(SERVICE_BINARY, ENTITY_HASH, 1, args.set_entity_prefs, ID_NODO)
-            _value = DEVICE.cmd_service_get_entity_preferences(SERVICE_BINARY, ENTITY_HASH, 1, ID_NODO)
-            print('New preference is %d' % _value)
+        if args.set_entity_prefs is not None:
+            if ENTITY_HASH is None:
+                print("Fatal: Hash is required for this operation.")
+            else:
+                _value = DEVICE.cmd_service_get_entity_preferences_num(SERVICE_BINARY, ENTITY_HASH, ID_NODO)
+                print('Set preference 1/%d' % _value)
+                _value = DEVICE.cmd_service_get_entity_preferences(SERVICE_BINARY, ENTITY_HASH, 1, ID_NODO)
+                print('Old preference is %d' % _value)
+                DEVICE.cmd_service_set_entity_preferences(SERVICE_BINARY, ENTITY_HASH, 1, args.set_entity_prefs, ID_NODO)
+                _value = DEVICE.cmd_service_get_entity_preferences(SERVICE_BINARY, ENTITY_HASH, 1, ID_NODO)
+                print('New preference is %d' % _value)
 
-    if args.set_switch_state is not None:
-        if ID_NODO > 0:
-            set_entity_state(ENTITY_HASH, args.set_switch_state, ID_NODO)
-        if GROUP_NODO > 0:
-            set_group_entity_state(ENTITY_HASH, args.set_switch_state, GROUP_NODO)
+        if args.set_switch_state is not None:
+            if ID_NODO > 0:
+                set_entity_state(ENTITY_HASH, args.set_switch_state, ID_NODO)
+            if GROUP_NODO > 0:
+                set_group_entity_state(ENTITY_HASH, args.set_switch_state, GROUP_NODO)
 
-    if args.test_switches:
-        if entities is not None:
-            test_switches(entities, ID_NODO)
-        else:
-            print('To test switches must disocer entities first')
+        if args.test_switches:
+            if entities is not None:
+                test_switches(entities, ID_NODO)
+            else:
+                print('To test switches must disocer entities first')
 
-    if args.test_dali:
-        if entities is not None:
-            test_dali_lights(entities, ID_NODO)
-        else:
-            print('To test dali must disocer entities first')
+        if args.test_dali:
+            if entities is not None:
+                test_dali_lights(entities, ID_NODO)
+            else:
+                print('To test dali must disocer entities first')
 
-    if args.rssi_check is not None:
-        rssi_check(args.rssi_check, ID_NODO)
+        if args.rssi_check is not None:
+            rssi_check(args.rssi_check, ID_NODO)
+
+
+if __name__ == "__main__":
+    main()
