@@ -6,8 +6,8 @@ progressbar2==3.53.1
 requests==2.26.0
 networkx~=2.8.4
 progressbar~=2.5
-numpy
+numpy==1.26.4
 
-meshmesh~=1.0.1
-PySide6~=6.4.2
+#meshmesh~=1.0.1
+#PySide6~=6.4.2
 setuptools~=58.1.0
