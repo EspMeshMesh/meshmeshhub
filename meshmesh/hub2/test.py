@@ -801,7 +801,7 @@ def main():
             rssi_check(args.rssi_check, ID_NODO)
 
         if args.bind_clear:
-            if ID_NODE > 0:
+            if ID_NODO > 0:
                 DEVICE.cmd_bind_clear(ID_NODO)
 
 
