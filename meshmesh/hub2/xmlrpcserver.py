@@ -184,6 +184,9 @@ class XMLRPCHub(handler.XMLRPCView):
         tag = tag.encode('ascii', 'ignore')
         return await self._rpc_request(serial, None, 'nodetagSet', tag=tag)
 
+    async def rpc_cmd_bind_clear(self, serial: int) -> str:
+        return await self._rpc_request(serial, None, 'bindClear')
+
     async def rpc_cmd_update_start(self, size, md5, serial):
         # type: (int, str, int) -> int
         __md5__ = md5.encode() + b'\0'

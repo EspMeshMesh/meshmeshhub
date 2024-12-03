@@ -235,8 +235,8 @@ def discovery_rssi_to_weight(_rssi):
     # type: (int) -> float
     if _rssi > 45:
         _rssi = 45
-    if _rssi <= 0:
-        _rssi = 0
+    if _rssi <= -1:
+        _rssi = -_rssi * 2
     _weight = 1.0 - _rssi / 45.0
     return _weight if _weight > 0.05 else 0.05
 
@@ -671,7 +671,7 @@ def auto_bool(v):
 
 
 def main():
-    global ID_NODO, ID_NODO_LOCALE
+    global ID_NODO, ID_NODO_LOCALE, GROUP_NODO, PORT_SERVER, IP_SERVER, ENTITY_HASH, DEVICE
     parser = argparse.ArgumentParser(description='Test Meshmesh protocol')
     parser.add_argument('--hub', dest='hub', default='127.0.0.1', type=str, help='IP address of the hub2 server')
     parser.add_argument('--port', dest='port', default=8801, type=int, help='port address of the hub2 server')
@@ -695,9 +695,9 @@ def main():
     parser.add_argument('--set-switch-state', dest='set_switch_state', default=None, type=auto_bool, help='set switch state')
     parser.add_argument('--filter-groups', dest='filter_groups', default=False, action='store_true', help='get filter groups')
     parser.add_argument('--filter-groups-set', dest='filter_groups_set', default=None, type=auto_int, help='get filter groups')
+    parser.add_argument('--bind-clear', dest='bind_clear', default=False, action='store_true', help='reset binded coordinator of node')
 
     args = parser.parse_args()
-
     if args.id:
         ID_NODO = args.id
     if args.group:
@@ -706,10 +706,11 @@ def main():
         ENTITY_HASH = args.hash
     if args.hub:
         IP_SERVER = args.hub
-    if args.hub:
+    if args.port:
         PORT_SERVER = args.port
 
     DEVICE = xmlrpc.client.ServerProxy(f"http://{IP_SERVER}:{PORT_SERVER}/RPC2", transport=RequestsTransport())
+    print(DEVICE)
 
     time.sleep(0.2)
     test_local_node()
@@ -798,6 +799,10 @@ def main():
 
         if args.rssi_check is not None:
             rssi_check(args.rssi_check, ID_NODO)
+
+        if args.bind_clear:
+            if ID_NODE > 0:
+                DEVICE.cmd_bind_clear(ID_NODO)
 
 
 if __name__ == "__main__":

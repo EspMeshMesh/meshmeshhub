@@ -80,14 +80,12 @@ api_commands = {
     #    {'name': 'value', 'len': 2, 'default': 0, 'encode': '<H'},
     #]},
     "nodetag": {"id": 6, "args": [
-    ]},
+        ]},
     "nodetagSet": {"id": 8, "args": [
         {'name': 'tag', 'len': 0}
     ]},
-    "updateStart": {"id": 10, "args": [
-        {'name': 'size', 'len': 4, 'default': 0, 'encode': '<I'},
-        {'name': 'md5', 'len': 0, 'default': None},
-    ]},
+    "bindClear": {"id": 10, "args": [
+        ]},
     "updateChunk": {"id": 12, "args": [
         {'name': 'chunk', 'len': 0, 'default': None},
     ]},
@@ -267,9 +265,8 @@ api_replies = {
     #    {'name': 'channel', 'len': 1, 'decode': 'B'},
     #    {'name': 'value', 'len': 2, 'decode': '<H'}
     #]},
-    "11": {"id": "updateStart", "structure": [
-        {'name': 'error', 'len': 1, 'decode': '<B'},
-    ]},
+    "11": {"id": "bindClear", "structure": [
+        ]},
     "13": {"id": "updateChunk", "structure": [
         {'name': 'error', 'len': 1, 'decode': 'B'},
         {'name': 'remaining', 'len': 4, 'decode': '<I'},
